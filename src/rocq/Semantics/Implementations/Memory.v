@@ -664,4 +664,12 @@ Section Implementation.
   
 End Implementation.
 
+(* The section-discharged instance above is not picked up by typeclass
+   resolution on its own; register it explicitly. Without it, resolving
+   the [MMP] implicit of [write_bytes]/[get_consecutive_ptrs] in a goal
+   like [memM_interp (x <- write_bytes p bs;; k x) s] falls back to a
+   [Params]/[IPtr] search cycle (see [IPtrInfinite.IPZ]) and exhausts
+   memory. With this registration the same goal elaborates in ~550MB. *)
+#[global] Existing Instance MemoryModelPrimitivesV.
+
 
