@@ -84,7 +84,7 @@ Section ReprInstances.
   Local Open Scope string.
 
   Definition repr_file_info (f : file_info) : string :=
-    "(mk_file_info " ++ """" ++ f.(filename) ++ """ "
+    "(mk_file_info " ++ repr f.(filename) ++ " "
                      ++ (repr f.(start_line)) ++ " "
                      ++ (repr f.(start_col))  ++ " "
                      ++ (repr f.(end_line)) ++ " "
@@ -451,7 +451,7 @@ Section ReprInstances.
     | EXP_Struct fields => "(EXP_Struct [" ++ (contents id (List.map texp fields)) ++ "])"
     | EXP_Packed_struct fields => "(EXP_Packed_struct [" ++ (contents id (List.map texp fields)) ++ "])"
     | EXP_Array fields => "(EXP_Array [" ++ (contents id (List.map texp fields)) ++ "])"
-    | EXP_Vector fields => "(EXP_vector [" ++ (contents id (List.map texp fields)) ++ "])"
+    | EXP_Vector fields => "(EXP_Vector [" ++ (contents id (List.map texp fields)) ++ "])"
     | OP_IBinop iop t v1 v2 =>
       "(OP_IBinop " ++ repr iop ++ " " ++ repr t ++ " " ++ repr_exp v1 ++ " " ++ repr_exp v2 ++ ")"
     | OP_ICmp s cmp t v1 v2 =>
@@ -473,13 +473,13 @@ Section ReprInstances.
     | OP_ExtractElement v i =>
         "(OP_ExtractElement " ++ texp v ++ " " ++ texp i ++ ")"
     | OP_InsertElement v e i =>
-        "(OP_ExtractElement " ++ texp v ++ " " ++ texp e ++ " " ++ texp i ++ ")"
+        "(OP_InsertElement " ++ texp v ++ " " ++ texp e ++ " " ++ texp i ++ ")"
     | OP_ShuffleVector v1 v2 mask =>
         "(OP_ShuffleVector " ++ texp v1 ++ " " ++ texp v2 ++ " " ++ texp mask ++ ")"
     | OP_ExtractValue v idxs =>
-        "(OP_ExtractValue " ++ texp v ++ " [" ++ (contents id (List.map show idxs)) ++ "])"
+        "(OP_ExtractValue " ++ texp v ++ " [" ++ (contents id (List.map repr idxs)) ++ "])"
     | OP_InsertValue v e idxs =>
-        "(OP_ExtractValue " ++ texp v ++ " " ++ texp e ++ " [" ++ (contents id (List.map show idxs)) ++ "])"
+        "(OP_InsertValue " ++ texp v ++ " " ++ texp e ++ " [" ++ (contents id (List.map repr idxs)) ++ "])"
     | OP_Select fm cnd v1 v2 =>
         "(OP_Select [" ++ (contents id (List.map repr_fast_math fm)) ++
                      "] " ++ texp cnd ++ " " ++ texp v1 ++ " " ++ texp v2 ++ ")"
@@ -491,12 +491,12 @@ Section ReprInstances.
           (repr alignstack) ++ " " ++
           (repr inteldialect) ++ " " ++
           (repr unwind) ++ " " ++
-          """" ++ template ++ """ " ++
-          """" ++ operand_constraints ++ """)"
+          repr template ++ " " ++
+          repr operand_constraints ++ ")"
     | EXP_Metadata md =>
         "(EXP_Metadata " ++ repr_metadata md ++ ")"
     | EXP_Splat elt =>
-        "(EXP_splt " ++ texp elt ++ ")"
+        "(EXP_Splat " ++ texp elt ++ ")"
     | EXP_BlockAddress fn blk =>
         "(EXP_BlockAddress " ++ repr fn ++ " " ++ repr blk ++ ")"
     end with
@@ -510,7 +510,7 @@ Section ReprInstances.
     | METADATA_Id id => "(METADATA_Id " ++ repr id ++ ")"
     | METADATA_Node mds => "(METADATA_Node [" ++ (contents id (List.map repr_metadata mds)) ++ "])"
     | METADATA_Pair md1 md2 => "(METADATA_Pair " ++ (repr_metadata md1) ++ " " ++ (repr_metadata md2) ++ ")"
-    | METADATA_Debug s1 s2 => "(METADATA_Debug " ++ repr s1 ++ ", " ++ repr s2 ++ ")"
+    | METADATA_Debug s1 s2 => "(METADATA_Debug " ++ repr s1 ++ " " ++ repr s2 ++ ")"
     | METADATA_File_info f => "(METADATA_File_info " ++ (repr f) ++ ")"
     end.
 
@@ -547,12 +547,12 @@ Section ReprInstances.
     | PARAMATTR_Zeroext => "PARAMATTR_Zeroext"
     | PARAMATTR_Signext => "PARAMATTR_Signext"
     | PARAMATTR_Inreg => "PARAMATTR_Inreg"
-    | PARAMATTR_Byval t => "PARAMATTR_Byval " ++ repr t
-    | PARAMATTR_Byref (t) => "PARAMATTR_Byref " ++ repr t
-    | PARAMATTR_Preallocated (t) => "PARAMATTR_Preallocated " ++ repr t
-    | PARAMATTR_Inalloca t => "PARAMATTR_Inalloca " ++ repr t
-    | PARAMATTR_Sret t => "PARAMATTR_Sret " ++ repr t
-    | PARAMATTR_Elementtype (t) => "PARAMATTR_Elementtype " ++ repr t
+    | PARAMATTR_Byval t => "(PARAMATTR_Byval " ++ repr t ++ ")"
+    | PARAMATTR_Byref (t) => "(PARAMATTR_Byref " ++ repr t ++ ")"
+    | PARAMATTR_Preallocated (t) => "(PARAMATTR_Preallocated " ++ repr t ++ ")"
+    | PARAMATTR_Inalloca t => "(PARAMATTR_Inalloca " ++ repr t ++ ")"
+    | PARAMATTR_Sret t => "(PARAMATTR_Sret " ++ repr t ++ ")"
+    | PARAMATTR_Elementtype (t) => "(PARAMATTR_Elementtype " ++ repr t ++ ")"
     | PARAMATTR_Align a => "(PARAMATTR_Align " ++ repr a ++ ")"
     | PARAMATTR_Noalias => "PARAMATTR_Noalias"
     | PARAMATTR_Nocapture => "PARAMATTR_Nocapture"
@@ -569,7 +569,7 @@ Section ReprInstances.
     | PARAMATTR_Noundef => "PARAMATTR_Noundef"
     | PARAMATTR_Nofpclass mask => "(PARAMATTR_Nofpclass " ++ repr mask ++ ")"
     | PARAMATTR_Nofreeobj => "PARAMATTR_Nofreeobj"
-    | PARAMATTR_Alignstack (a) => "PARAMATTR_Alignstack " ++ repr a
+    | PARAMATTR_Alignstack (a) => "(PARAMATTR_Alignstack " ++ repr a ++ ")"
     | PARAMATTR_Allocalign =>  "PARAMATTR_Allocalign"
     | PARAMATTR_Allocptr => "PARAMATTR_Allocptr"
     | PARAMATTR_Readnone => "PARAMATTR_Readnone"
@@ -632,7 +632,7 @@ Section ReprInstances.
     | CC_Ccc => "CC_Ccc"
     | CC_Fastcc => "CC_Fastcc"
     | CC_Coldcc => "CC_Coldcc"
-    | CC_Cc cc => "CC_Cc cc"
+    | CC_Cc cc => "(CC_Cc " ++ repr cc ++ ")"
     | CC_Webkit_jscc => "CC_Webkit_jscc"
     | CC_Anyregcc  => "CC_Anyregcc"
     | CC_Preserve_allcc => "CC_Preserve_allcc"
@@ -678,12 +678,7 @@ Section ReprInstances.
     | FNATTR_Alignstack a => "(FNATTR_Alignstack " ++ repr a ++ ")"
     (* | FNATTR_Alloc_family (fam) => "(FNATTR_Alloc_family " ++ repr fam ++ ")" *)
     | FNATTR_Allockind (kind) => "(FNATTR_Allockind " ++ repr kind ++ ")"
-    | FNATTR_Allocsize l l2 => let printable_l2 := match l2 with
-                                                 |None => ""
-                                                 |Some s => repr s
-                                                 end in
-
-        "(FNATTR_Allocsize " ++ repr l ++ printable_l2 ++ ")"
+    | FNATTR_Allocsize l l2 => "(FNATTR_Allocsize " ++ repr l ++ " " ++ repr l2 ++ ")"
     | FNATTR_Alwaysinline => "FNATTR_Alwaysinline"
     | FNATTR_Builtin => "FNATTR_Builtin"
     | FNATTR_Cold => "FNATTR_Cold"
@@ -759,17 +754,13 @@ Section ReprInstances.
     (*      "(FNATTR_Denormal_fp_math32 " ++ repr s1 ++ printable_sw ++ ")" *)
     (* | FNATTR_Thunk => "FNATTR_Thunk" *)
     | FNATTR_Tls_load_hoist => "FNATTR_Tls_load_hoist"
-    | FNATTR_Uwtable sync => "FNATTR_Uwtable " ++ repr sync
+    | FNATTR_Uwtable sync => "(FNATTR_Uwtable " ++ repr sync ++ ")"
     | FNATTR_Nocf_check => "FNATTR_Nocf_check"
     | FNATTR_Shadowcallstack => "FNATTR_Shadowcallstack"
     | FNATTR_Mustprogress => "FNATTR_Mustprogress"
     (* | FNATTR_Warn_stack_size (th) => "FNATTR_Warn_stack_size " ++ repr th   *)
     | FNATTR_Vscale_range (min) (max) =>
-         let printable_max := match max with
-                            |None => ""
-                            |Some s => repr s
-                            end in
-         "(FNATTR_Denormal_fp_math32 " ++ repr min ++ printable_max ++ ")"
+         "(FNATTR_Vscale_range " ++ repr min ++ " " ++ repr max ++ ")"
     (* | FNATTR_Min_legal_vector_width  (size) => "FNATTR_Min_legal_vector_width " ++ repr size  *)
     | FNATTR_String s => "(FNATTR_String " ++ repr s ++ ")"
     | FNATTR_Key_value kv => "(FNATTR_Key_value " ++ repr kv ++ ")"
@@ -828,7 +819,7 @@ Section ReprInstances.
 
   #[global]
    Instance reprTailcall : Repr tailcall :=
-    {| repr := show_tailcall |}.
+    {| repr := repr_tailcall |}.
 
   Definition repr_ordering (o : ordering) : string :=
       match o with
@@ -957,7 +948,7 @@ Section ReprInstances.
   #[global] Instance ReprOperand_bundle : Repr operand_bundle :=
     {| repr := fun ob =>
                  "(mk_operand_bundle " ++
-                   (repr (ob_tag ob)) ++
+                   (repr (ob_tag ob)) ++ " " ++
                    (repr (ob_ops ob)) ++
                    ")"
     |}.
@@ -965,10 +956,10 @@ Section ReprInstances.
   
   Definition repr_instr (i : instr typ) : string
     := match i with
-       | INSTR_Comment s => "(INSTR_Comment " ++ s ++ ")"
+       | INSTR_Comment s => "(INSTR_Comment " ++ repr s ++ ")"
        | INSTR_Op e => "(INSTR_Op " ++ repr e ++ ")"
        | INSTR_Call e params annotations obs =>
-           "(INSTR_Call " ++ repr e ++ " " ++ repr params ++ " " ++ repr annotations ++ repr obs ++ ")"
+           "(INSTR_Call " ++ repr e ++ " " ++ repr params ++ " " ++ repr annotations ++ " " ++ repr obs ++ ")"
        | INSTR_Alloca t anns =>
          "(INSTR_Alloca " ++ repr t ++ " " ++ repr anns ++ ")"
        | INSTR_Load t ptr anns =>
@@ -976,7 +967,7 @@ Section ReprInstances.
        | INSTR_Store tval ptr anns =>
          "(INSTR_Store " ++ repr tval ++ " " ++ repr ptr ++ " " ++ repr anns ++ ")"
        | INSTR_Fence str ord =>
-           "(INSTR_Fence " ++ show str ++ " " ++ repr ord ++ ")"
+           "(INSTR_Fence " ++ repr str ++ " " ++ repr ord ++ ")"
        | INSTR_AtomicCmpXchg cmpx =>
            "(INSTR_AtomicCmpXchg " ++ repr cmpx ++ ")"
        | INSTR_AtomicRMW rmw =>
@@ -1017,13 +1008,13 @@ Section ReprInstances.
          "(TERM_Br " ++ repr te ++ " " ++ repr b1 ++ " " ++ repr b2 ++ ")"
        | TERM_Br_1 b => "(TERM_Br_1 " ++ repr b ++ ")"
        | TERM_Switch v dest brs  => 
-          "(TERM_Switch " ++ repr v ++ " " ++ repr dest ++ repr brs ++ ")"
+          "(TERM_Switch " ++ repr v ++ " " ++ repr dest ++ " " ++ repr brs ++ ")"
       | TERM_IndirectBr v brs fn  => 
           "(TERM_IndirectBr " ++ repr v ++ " " ++ repr brs ++ " " ++ repr fn ++ ")" 
       | TERM_Resume v  => "(TERM_Resume " ++ repr v ++ ")"
       | TERM_Invoke fnptrval args to_label unwind_label anns obs  =>
-          "(TERM_Invoke " ++ repr fnptrval ++ " " ++ repr args 
-          ++ " " ++ repr to_label ++ " " ++ repr unwind_label ++ repr anns ++ repr obs ++ ")"
+          "(TERM_Invoke " ++ repr fnptrval ++ " " ++ repr args
+          ++ " " ++ repr to_label ++ " " ++ repr unwind_label ++ " " ++ repr anns ++ " " ++ repr obs ++ ")"
       | TERM_Unreachable => "TERM_Unreachable"
        end.
 
@@ -1034,7 +1025,7 @@ Section ReprInstances.
   Definition repr_phi (p : phi typ) : string
     := match p with
        | Phi fm t args =>
-         "(Phi [" ++ (contents id (List.map repr_fast_math fm)) ++ "] " ++ repr t ++ repr args ++ ")"
+         "(Phi [" ++ (contents id (List.map repr_fast_math fm)) ++ "] " ++ repr t ++ " " ++ repr args ++ ")"
        end.
 
   #[global]
