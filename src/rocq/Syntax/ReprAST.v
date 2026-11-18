@@ -683,7 +683,7 @@ Section ReprInstances.
     | FNATTR_Builtin => "FNATTR_Builtin"
     | FNATTR_Cold => "FNATTR_Cold"
     | FNATTR_Convergent => "FNATTR_Convergent"
-    | FNATTR_Disable_sanitizer_instrumentation => "FNATTR__Disable_sanitizer_instrumentation"
+    | FNATTR_Disable_sanitizer_instrumentation => "FNATTR_Disable_sanitizer_instrumentation"
     (* | FNATTR_Dontcall_error => "FNATTR_Dontcall_error"                             *)
     (* | FNATTR_Dontcall_warn => "FNATTR_Dontcall_warn"                           *)
     | FNATTR_Fn_ret_thunk_extern => "FNATTR_Fn_ret_thunk_extern"
